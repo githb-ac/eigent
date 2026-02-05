@@ -116,7 +116,7 @@ export default function Home() {
         cancelText={t('layout.cancel')}
       />
       {/* welcome text */}
-      <div className="flex w-full flex-row bg-gradient-to-b from-transparent to-surface-primary px-20 pt-16">
+      <div className="to-background px-20 pt-16 flex w-full flex-row bg-gradient-to-b from-transparent">
         <WordCarousel
           words={[`${t('layout.welcome')}, ${welcomeName} !`]}
           className="text-heading-xl font-bold tracking-tight"
@@ -125,7 +125,7 @@ export default function Home() {
           sweepOnce
           gradient={`linear-gradient(in oklch 90deg,
 							#f9f8f6 0%, var(--colors-blue-300) 30%,
-							var(--colors-emerald-default) 50%, 
+							var(--colors-emerald-default) 50%,
 							var(--colors-green-500) 70%,
 							var(--colors-orange-300) 100%)`}
           ariaLabel="rotating headline"
@@ -133,10 +133,10 @@ export default function Home() {
       </div>
       {/* Navbar */}
       <div
-        className={`sticky top-0 z-20 flex flex-col items-center justify-between border-x-0 border-t-0 border-solid border-border-disabled bg-surface-primary px-20 pb-4 pt-10`}
+        className={`bg-background top-0 border-border-disabled px-20 pb-4 pt-10 sticky z-20 flex flex-col items-center justify-between border-x-0 border-t-0 border-solid`}
       >
         <div className="mx-auto flex w-full flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="gap-2 flex items-center">
             <MenuToggleGroup
               type="single"
               value={activeTab}

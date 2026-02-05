@@ -14,6 +14,7 @@
 
 import { fetchPut } from '@/api/http';
 import useChatStoreAdapter from '@/hooks/useChatStoreAdapter';
+import { TaskStatus } from '@/types/constants';
 import {
   ArrowDown,
   ArrowUp,
@@ -29,7 +30,6 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TaskState } from '../TaskState';
 import { Button } from '../ui/button';
-import { TaskStatus } from "@/types/constants";
 
 export default function Home() {
   //Get Chatstore for the active project's task
@@ -167,9 +167,9 @@ export default function Home() {
   }
 
   return isTakeControl ? (
-    <div className="flex h-full w-full flex-col items-center justify-start rounded-xl border border-solid border-border-success bg-menutabs-bg-default">
-      <div className="flex w-full items-start justify-start gap-sm p-sm">
-        <div className="rounded-full border border-solid border-border-primary bg-transparent p-1">
+    <div className="rounded-xl border-border-success bg-menutabs-bg-default flex h-full w-full flex-col items-center justify-start border border-solid">
+      <div className="gap-sm p-sm flex w-full items-start justify-start">
+        <div className="border-border-primary p-1 rounded-full border border-solid bg-transparent">
           <Button
             onClick={() => {
               fetchPut(`/task/${projectStore.activeProjectId}/take-control`, {
@@ -192,11 +192,11 @@ export default function Home() {
     </div>
   ) : (
     <div
-      className={`flex h-[calc(100vh-104px)] w-full flex-1 items-center justify-center transition-all duration-300 ease-in-out`}
+      className={`ease-in-out flex h-[calc(100vh-104px)] w-full flex-1 items-center justify-center transition-all duration-300`}
     >
-      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-2xl bg-menutabs-bg-default">
-        <div className="flex flex-shrink-0 items-center justify-between rounded-t-2xl px-2 pb-2 pt-3">
-          <div className="flex items-center justify-start gap-sm">
+      <div className="rounded-2xl bg-menutabs-bg-default relative flex h-full w-full flex-col overflow-hidden">
+        <div className="rounded-t-2xl px-2 pb-2 pt-3 flex flex-shrink-0 items-center justify-between">
+          <div className="gap-sm flex items-center justify-start">
             <Button
               size="icon"
               variant="ghost"
@@ -224,7 +224,8 @@ export default function Home() {
               }
               done={
                 activeAgent?.tasks?.filter(
-                  (task) => task.status === TaskStatus.COMPLETED
+                  (task) =>
+                    task.status === TaskStatus.COMPLETED && !task.reAssignTo
                 ).length || 0
               }
               progress={
@@ -233,17 +234,24 @@ export default function Home() {
                     task.status !== TaskStatus.FAILED &&
                     task.status !== TaskStatus.COMPLETED &&
                     task.status !== TaskStatus.SKIPPED &&
-                    task.status !== TaskStatus.WAITING
+                    task.status !== TaskStatus.WAITING &&
+                    task.status !== TaskStatus.EMPTY &&
+                    !task.reAssignTo
                 ).length || 0
               }
               failed={
-                activeAgent?.tasks?.filter((task) => task.status === TaskStatus.FAILED)
-                  .length || 0
+                activeAgent?.tasks?.filter(
+                  (task) =>
+                    task.status === TaskStatus.FAILED && !task.reAssignTo
+                ).length || 0
               }
               skipped={
                 activeAgent?.tasks?.filter(
                   (task) =>
-                    task.status === TaskStatus.SKIPPED || task.status === TaskStatus.WAITING
+                    (task.status === TaskStatus.SKIPPED ||
+                      task.status === TaskStatus.WAITING ||
+                      task.status === TaskStatus.EMPTY) &&
+                    !task.reAssignTo
                 ).length || 0
               }
             />
@@ -270,14 +278,14 @@ export default function Home() {
                     activeAgent?.activeWebviewIds?.[0]?.id || ''
                   )
                 }
-                className="group relative h-full w-full cursor-pointer rounded-b-2xl pt-sm"
+                className="group rounded-b-2xl pt-sm relative h-full w-full cursor-pointer"
               >
                 <img
                   src={activeAgent?.activeWebviewIds[0]?.img}
                   alt=""
-                  className="h-full w-full rounded-b-2xl object-contain"
+                  className="rounded-b-2xl h-full w-full object-contain"
                 />
-                <div className="bg-black/20 pointer-events-none absolute inset-0 flex h-full w-full items-center justify-center rounded-b-lg opacity-0 transition-all group-hover:opacity-100">
+                <div className="bg-black/20 inset-0 rounded-b-lg pointer-events-none absolute flex h-full w-full items-center justify-center opacity-0 transition-all group-hover:opacity-100">
                   <Button
                     size="sm"
                     variant="primary"
@@ -297,7 +305,7 @@ export default function Home() {
             ref={scrollContainerRef}
             className={`${
               isSingleMode ? 'px-0' : 'px-2 pb-2'
-            } scrollbar relative flex min-h-0 flex-1 flex-wrap justify-start gap-4 overflow-y-auto`}
+            } scrollbar min-h-0 gap-4 relative flex flex-1 flex-wrap justify-start overflow-y-auto`}
           >
             {activeAgent?.activeWebviewIds
               ?.filter((item) => item?.img)
@@ -306,7 +314,7 @@ export default function Home() {
                   <div
                     key={index}
                     onClick={() => handleTakeControl(item.id)}
-                    className={`card-box group relative cursor-pointer rounded-lg ${
+                    className={`card-box group rounded-lg relative cursor-pointer ${
                       isSingleMode
                         ? 'h-[calc(100%)] w-[calc(100%)]'
                         : 'h-[calc(50%-8px)] w-[calc(50%-8px)]'
@@ -316,7 +324,7 @@ export default function Home() {
                       <img
                         src={item.img}
                         alt=""
-                        className="h-full w-full rounded-2xl object-contain"
+                        className="rounded-2xl h-full w-full object-contain"
                       />
                     )}
                     <div
@@ -325,7 +333,7 @@ export default function Home() {
                           activeAgent?.activeWebviewIds?.[0]?.id || ''
                         )
                       }
-                      className="bg-black/20 pointer-events-none absolute inset-0 flex h-full w-full items-center justify-center rounded-lg opacity-0 transition-all group-hover:opacity-100"
+                      className="bg-black/20 inset-0 rounded-lg pointer-events-none absolute flex h-full w-full items-center justify-center opacity-0 transition-all group-hover:opacity-100"
                     >
                       <Button
                         size="sm"
@@ -344,7 +352,7 @@ export default function Home() {
           </div>
         )}
         {activeAgent?.activeWebviewIds?.length !== 1 && (
-          <div className="z-100 absolute bottom-2 right-2 flex w-auto items-center gap-1 rounded-lg border border-solid border-border-primary bg-menutabs-bg-default p-1">
+          <div className="bottom-2 right-2 gap-1 rounded-lg border-border-primary bg-menutabs-bg-default p-1 absolute z-100 flex w-auto items-center border border-solid">
             <Button
               size="icon"
               variant="ghost"

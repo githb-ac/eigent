@@ -31,7 +31,7 @@ export function UserMessageCard({
   className,
   attaches,
 }: UserMessageCardProps) {
-  const [hoveredFilePath, setHoveredFilePath] = useState<string | null>(null);
+  const [_hoveredFilePath, setHoveredFilePath] = useState<string | null>(null);
   const [isRemainingOpen, setIsRemainingOpen] = useState(false);
   const hoverCloseTimerRef = useRef<number | null>(null);
 
@@ -69,18 +69,18 @@ export function UserMessageCard({
   return (
     <div
       key={id}
-      className={`relative w-full rounded-xl border bg-surface-tertiary px-sm py-2 ${className || ''} group overflow-visible`}
+      className={`rounded-xl bg-surface-primary px-sm py-2 relative w-full border ${className || ''} group overflow-visible`}
     >
-      <div className="absolute bottom-[0px] right-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <div className="right-1 absolute bottom-[0px] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <Button onClick={handleCopy} variant="ghost" size="icon">
           <Copy />
         </Button>
       </div>
-      <div className="whitespace-pre-wrap break-words text-body-sm text-text-body">
+      <div className="text-body-sm text-text-body break-words whitespace-pre-wrap">
         {content}
       </div>
       {attaches && attaches.length > 0 && (
-        <div className="relative mt-2 box-border flex w-full flex-wrap items-start gap-1">
+        <div className="mt-2 gap-1 relative box-border flex w-full flex-wrap items-start">
           {(() => {
             // Show max 4 files + count indicator
             const maxVisibleFiles = 4;
@@ -93,12 +93,11 @@ export function UserMessageCard({
             return (
               <>
                 {visibleFiles.map((file) => {
-                  const isHovered = hoveredFilePath === file.filePath;
                   return (
                     <div
                       key={'attache-' + file.fileName}
                       className={cn(
-                        'relative box-border flex h-auto max-w-32 cursor-pointer items-center gap-0.5 rounded-lg bg-tag-surface transition-colors duration-300 hover:bg-tag-surface-hover'
+                        'max-w-32 gap-0.5 rounded-lg bg-tag-surface hover:bg-tag-surface-hover relative box-border flex h-auto cursor-pointer items-center transition-colors duration-300'
                       )}
                       onMouseEnter={() => setHoveredFilePath(file.filePath)}
                       onMouseLeave={() =>
@@ -115,14 +114,14 @@ export function UserMessageCard({
                       }}
                     >
                       {/* File icon */}
-                      <div className="flex h-6 w-6 items-center justify-center rounded-md">
+                      <div className="h-6 w-6 rounded-md flex items-center justify-center">
                         {getFileIcon(file.fileName)}
                       </div>
 
                       {/* File Name */}
                       <p
                         className={cn(
-                          "relative my-0 min-h-px min-w-px flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap font-['Inter'] text-xs font-bold leading-tight text-text-body"
+                          "my-0 text-xs font-bold leading-tight text-text-body relative min-h-px min-w-px flex-1 overflow-hidden font-['Inter'] overflow-ellipsis whitespace-nowrap"
                         )}
                         title={file.fileName}
                       >
@@ -142,14 +141,14 @@ export function UserMessageCard({
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="relative box-border flex h-auto items-center rounded-lg bg-tag-surface"
+                        className="rounded-lg bg-tag-surface relative box-border flex h-auto items-center"
                         onMouseEnter={openRemainingPopover}
                         onMouseLeave={scheduleCloseRemainingPopover}
                         onClick={(e) => {
                           e.stopPropagation();
                         }}
                       >
-                        <p className="my-0 whitespace-nowrap font-['Inter'] text-xs font-bold leading-tight text-text-body">
+                        <p className="my-0 text-xs font-bold leading-tight text-text-body font-['Inter'] whitespace-nowrap">
                           {remainingCount}+
                         </p>
                       </Button>
@@ -157,17 +156,16 @@ export function UserMessageCard({
                     <PopoverContent
                       align="end"
                       sideOffset={4}
-                      className="!w-auto max-w-40 rounded-md border border-dropdown-border bg-dropdown-bg p-1 shadow-perfect"
+                      className="max-w-40 rounded-md border-dropdown-border bg-dropdown-bg p-1 shadow-perfect !w-auto border"
                       onMouseEnter={openRemainingPopover}
                       onMouseLeave={scheduleCloseRemainingPopover}
                     >
-                      <div className="scrollbar-hide flex max-h-[176px] flex-col gap-1 overflow-auto">
+                      <div className="scrollbar-hide gap-1 flex max-h-[176px] flex-col overflow-auto">
                         {attaches.slice(maxVisibleFiles).map((file) => {
-                          const isHovered = hoveredFilePath === file.filePath;
                           return (
                             <div
                               key={file.filePath}
-                              className="flex cursor-pointer items-center gap-1 rounded-lg bg-tag-surface py-0.5 transition-colors duration-300 hover:bg-tag-surface-hover"
+                              className="gap-1 rounded-lg bg-tag-surface py-0.5 hover:bg-tag-surface-hover flex cursor-pointer items-center transition-colors duration-300"
                               onMouseLeave={() =>
                                 setHoveredFilePath((prev) =>
                                   prev === file.filePath ? null : prev
@@ -182,10 +180,10 @@ export function UserMessageCard({
                                 setIsRemainingOpen(false);
                               }}
                             >
-                              <div className="flex h-6 w-6 items-center justify-center rounded-md">
+                              <div className="h-6 w-6 rounded-md flex items-center justify-center">
                                 {getFileIcon(file.fileName)}
                               </div>
-                              <p className="my-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-['Inter'] text-xs font-bold leading-tight text-text-body">
+                              <p className="my-0 text-xs font-bold leading-tight text-text-body flex-1 overflow-hidden font-['Inter'] text-ellipsis whitespace-nowrap">
                                 {file.fileName}
                               </p>
                             </div>
