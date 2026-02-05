@@ -116,7 +116,7 @@ export default function Home() {
         cancelText={t('layout.cancel')}
       />
       {/* welcome text */}
-      <div className="to-background px-20 pt-16 flex w-full flex-row bg-gradient-to-b from-transparent">
+      <div className="px-20 pt-16 to-surface-primary from-surface-primary flex w-full flex-row bg-gradient-to-b">
         <WordCarousel
           words={[`${t('layout.welcome')}, ${welcomeName} !`]}
           className="text-heading-xl font-bold tracking-tight"
@@ -133,7 +133,7 @@ export default function Home() {
       </div>
       {/* Navbar */}
       <div
-        className={`bg-background top-0 border-border-disabled px-20 pb-4 pt-10 sticky z-20 flex flex-col items-center justify-between border-x-0 border-t-0 border-solid`}
+        className={`bg-surface-primary top-0 border-border-disabled px-20 pb-4 pt-10 sticky z-20 flex flex-col items-center justify-between border-x-0 border-t-0 border-solid`}
       >
         <div className="mx-auto flex w-full flex-row items-center justify-between">
           <div className="gap-2 flex items-center">
